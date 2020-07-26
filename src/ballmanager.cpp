@@ -45,6 +45,9 @@ void BallManager::FileOperations(std::string fileName)
 
 	//Create new ball array
 	ballArray = new Ball[ballCount];
+	if (!ballArray) {
+	  fprintf(stderr, "ballArray allocation failed\n"); exit(0);
+	}
 
 	//Get other lines of text as ball positions
 	for (int i = 0; i < ballCount; i++)
@@ -53,13 +56,13 @@ void BallManager::FileOperations(std::string fileName)
 		std::istringstream iss(line);
 
 		getline(iss, word, ' ');
-		ballArray[i].posX = stoi(word);
+		ballArray[i].posX = stod(word);
 
 		getline(iss, word, ' ');
-		ballArray[i].posY = stoi(word);
+		ballArray[i].posY = stod(word);
 
 		getline(iss, word, '\n');
-		ballArray[i].posZ = stoi(word);
+		ballArray[i].posZ = stod(word);
 	}
 
 	//Close the file
@@ -111,23 +114,26 @@ double BallManager::SearchStrip(std::vector<Ball*> strip, double stripDist)
 
 	//If ball count is more than 3, start processing of creating columns
 	//Find the smallest z value among balls
-	int smallestZ = strip[0]->posZ;
+	double smallestZ = strip[0]->posZ;
 	for (int i = 1; i < stripSize; i++)
 		if (strip[i]->posZ < smallestZ)
 			smallestZ = strip[i]->posZ;
 
 	//Find the largest z value among balls
-	int largestZ = strip[0]->posZ;
+	double largestZ = strip[0]->posZ;
 	for (int i = 1; i < stripSize; i++)
 		if (strip[i]->posZ > largestZ)
 			largestZ = strip[i]->posZ;
 
 	//Find range between z values and column count
-	int rangeZ = largestZ - smallestZ;
+	double rangeZ = largestZ - smallestZ;
 	int columnCount = (int)(rangeZ / stripDist) + 1;
 
 	//Create an array of ball pointer vectors to put pointers of balls into proper columns
 	std::vector<Ball*>* columns = new std::vector<Ball*>[columnCount];
+	if (!columns){
+	  fprintf(stderr, "columns allocation failed\n"); exit(0);
+	}
 
 	//Put all balls into proper columns (Phase 1)
 	//Start picking balls one by one with the smallest Y first
@@ -232,7 +238,7 @@ double BallManager::RecursiveCall(int sortedXPos, std::vector<Ball*> sortedY)
 	//Put balls which are close enough to middle into strip
 	for (int i = 0; i < size; i++)
 	{
-		int distToMid = sortedY[i]->posX - midBall->posX;
+		double distToMid = sortedY[i]->posX - midBall->posX;
 		if (distToMid < 0)
 			distToMid *= -1;
 		if (distToMid < stripDist)

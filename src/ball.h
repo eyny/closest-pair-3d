@@ -8,7 +8,7 @@
 class Ball
 {
 public:
-	int posX, posY, posZ; //Position values in 3D space
+        double posX, posY, posZ;
 	int columnNumber[3]; //ID number of the column which ball belongs to (left, middle, right)
 	int columnIndex[3]; //Position inside the column (left, middle, right)
 	double DistanceTo(Ball*); //Find distance to another ball
